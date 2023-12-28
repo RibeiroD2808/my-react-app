@@ -1,28 +1,27 @@
-import logo from './logo.svg';
 import './App.css';
 import { useState } from 'react';
 
 function App() {
-  
   const apiKey = process.env.REACT_APP_WEATHER_API_KEY;
   console.log(apiKey);
   
   //api response
   const [data, setData] = useState(0);
+  console.log(data);
   const handleSearchData = (searchData) => {
     
     setData(searchData);
     console.log(data);
-    console.log(data.clouds);
+    console.log(data.clouds?.all);
 
   };
 
   return (
     <div id='gridDiv'>
-      <Day />
       <SearchBar apiKey = {apiKey} onSearch={handleSearchData}/>  
+      <Day data = {data}/>
       <Week />  
-      <Maps />  
+      <Maps />
     </div>
   );
 }
@@ -70,10 +69,20 @@ function SearchBar({apiKey, onSearch}){
   )
 }
 
-function Day(){
+function Day({data}){
+
+  let weather = data.weather;
+  console.log(data[0]);
+
+  function Image(data){
+    let name = "/WheatherImages.jpg";
+    return <img src={name} alt={name} />
+  }
+
+
   return(
     <div id="dayDiv">
-
+      <Image />
     </div>
   )
 }
