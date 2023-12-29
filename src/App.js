@@ -3,33 +3,32 @@ import { useState } from 'react';
 
 function App() {
   const apiKey = process.env.REACT_APP_WEATHER_API_KEY;
-  console.log(apiKey);
   
   //api response
   const [data, setData] = useState(0);
-  console.log(data);
   const handleSearchData = (searchData) => {
     
     setData(searchData);
-    console.log(data);
-    console.log(data.clouds?.all);
-
   };
 
+  //default data
+  if(!data){
+    fetch('https://api.openweathermap.org/data/2.5/weather?lat=41.4417677&lon=-8.2955712&appid=' + apiKey + '&units=metric')
+    .then(response => response.json())
+    .then(data => handleSearchData(data))
+  }
+  
   return (
     <div id='gridDiv'>
       <SearchBar apiKey = {apiKey} onSearch={handleSearchData}/>  
-      <Day data = {data}/>
-      <Week />  
-      <Maps />
+      {data ? <Day data = {data}/> : null}
+      {data ? <Maps data = {data}/> : null}
     </div>
   );
 }
 
 function SearchBar({apiKey, onSearch}){
   
-  const [lat, setLat] = useState(0);
-  const [lon, setLon] = useState(0);
   const [searchText, setSearchText] = useState('');
 
   //set input value
@@ -40,24 +39,33 @@ function SearchBar({apiKey, onSearch}){
 
   const handleClick = () => {
     
-    //example while cant request data again
-    setLat(10.99);
-    setLon(44.34);
     
-    const jsonFile = '{"coord":{"lon":10.99,"lat":44.34},"weather":[{"id":501,"main":"Rain","description":"moderate rain","icon":"10d"}],"base":"stations","main":{"temp":298.48,"feels_like":298.74,"temp_min":297.56,"temp_max":300.05,"pressure":1015,"humidity":64,"sea_level":1015,"grnd_level":933},"visibility":10000,"wind":{"speed":0.62,"deg":349,"gust":1.18},"rain":{"1h":3.16},"clouds":{"all":100},"dt":1661870592,"sys":{"type":2,"id":2075663,"country":"IT","sunrise":1661834187,"sunset":1661882248},"timezone":7200,"id":3163858,"name":"Zocca","cod":200}'          
-    onSearch(JSON.parse(jsonFile));                   
-    return;
-    //Direct geocoding
-    fetch('http://api.openweathermap.org/geo/1.0/direct?q=' + searchText +'&appid=' + apiKey.apiKey)
+    const isApiOn = true;
+
+    if(isApiOn){
+      //Direct geocoding
+      fetch('http://api.openweathermap.org/geo/1.0/direct?q=' + searchText + '&appid=' + apiKey)
       .then(response => response.json())
-      .then(data => {
-        setLat(data[0].lat);
-        setLon(data[0].lon);
-      //Call current weather data
-      }).then(fetch('https://api.openweathermap.org/data/2.5/weather?lat=' + lat + '&lon=' + lon + '&appid=' + apiKey.apiKey + '&units=metric')
-              .then(response => response.json())
-              .then(data => onSearch(data))
-      )
+      .then( async data => {
+        console.log(data);
+
+        //current weather
+        const weatherResponse = await fetch('https://api.openweathermap.org/data/2.5/weather?lat=' + data[0].lat + '&lon=' + data[0].lon + '&appid=' + apiKey + '&units=metric');
+        const weatherData = await weatherResponse.json();
+        //update data
+        onSearch(weatherData);
+
+        
+
+      })
+    }else{
+      //example while cant request data again
+      const jsonFile = '{"coord":{"lon":10.99,"lat":44.34},"weather":[{"id":501,"main":"Rain","description":"moderate rain","icon":"10d"}],"base":"stations","main":{"temp":298.48,"feels_like":298.74,"temp_min":297.56,"temp_max":300.05,"pressure":1015,"humidity":64,"sea_level":1015,"grnd_level":933},"visibility":10000,"wind":{"speed":0.62,"deg":349,"gust":1.18},"rain":{"1h":3.16},"clouds":{"all":100},"dt":1661870592,"sys":{"type":2,"id":2075663,"country":"IT","sunrise":1661834187,"sunset":1661882248},"timezone":7200,"id":3163858,"name":"Zocca","cod":200}'          
+      onSearch(JSON.parse(jsonFile));  
+    }
+                     
+    return;
+    
   }
 
   
@@ -71,18 +79,38 @@ function SearchBar({apiKey, onSearch}){
 
 function Day({data}){
 
-  let weather = data.weather;
-  console.log(data[0]);
+  console.log(data);
+  const weather = data.weather[0].main;
+  const degrees = data.main.temp;
+  let imgName = "/WheatherImages.jpg";
 
-  function Image(data){
-    let name = "/WheatherImages.jpg";
-    return <img src={name} alt={name} />
+  console.log(weather);
+  console.log(imgName);
+  
+  switch (weather){
+    case 'Rain':
+      imgName = "/WheatherImages.jpg"
+      break;
+    case 'Clear':
+      imgName = ""
+      break;
+    case 'Clouds':
+      imgName = ""
+      break;
+    case 'Snow':
+      imgName = ""
+      break;
+  }
+  
+  function Image(){
+    return <img id="weatherImg" src={imgName} alt={imgName} />
   }
 
 
   return(
     <div id="dayDiv">
       <Image />
+      <p>{degrees}</p>
     </div>
   )
 }
@@ -95,11 +123,17 @@ function Week(){
   )
 }
 
-function Maps(){
+function Maps(data){
   
+  function Map({layer}){
+    const src = 'https://tile.openweathermap.org/map/' + layer + '/1/1/1.png?appid=9b4b60468dfddcc0882aa6b9937b9a7c';
+    return <img id="weatherImg" src={src} alt={layer + 'Map'} />
+  }
+
   return(
     <div id='mapsDiv'>
-      
+      <Map layer="temp_new"/>
+      <Map layer="clouds_new"/>
     </div>
   )
 }
