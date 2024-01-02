@@ -22,6 +22,7 @@ function App() {
     <div id='gridDiv'>
       <SearchBar apiKey = {apiKey} onSearch={handleSearchData}/>  
       {data ? <Day data = {data}/> : null}
+      {data ? <Week apiKey = {apiKey} data = {data}/> : null}
       {data ? <Maps data = {data}/> : null}
     </div>
   );
@@ -39,30 +40,19 @@ function SearchBar({apiKey, onSearch}){
 
   const handleClick = () => {
     
-    
-    const isApiOn = true;
+    //Direct geocoding
+    fetch('http://api.openweathermap.org/geo/1.0/direct?q=' + searchText + '&appid=' + apiKey)
+    .then(response => response.json())
+    .then( async data => {
+      console.log(data);
 
-    if(isApiOn){
-      //Direct geocoding
-      fetch('http://api.openweathermap.org/geo/1.0/direct?q=' + searchText + '&appid=' + apiKey)
-      .then(response => response.json())
-      .then( async data => {
-        console.log(data);
+      //current weather
+      const weatherResponse = await fetch('https://api.openweathermap.org/data/2.5/weather?lat=' + data[0].lat + '&lon=' + data[0].lon + '&appid=' + apiKey + '&units=metric');
+      const weatherData = await weatherResponse.json();
+      //update data
+      onSearch(weatherData);
 
-        //current weather
-        const weatherResponse = await fetch('https://api.openweathermap.org/data/2.5/weather?lat=' + data[0].lat + '&lon=' + data[0].lon + '&appid=' + apiKey + '&units=metric');
-        const weatherData = await weatherResponse.json();
-        //update data
-        onSearch(weatherData);
-
-        
-
-      })
-    }else{
-      //example while cant request data again
-      const jsonFile = '{"coord":{"lon":10.99,"lat":44.34},"weather":[{"id":501,"main":"Rain","description":"moderate rain","icon":"10d"}],"base":"stations","main":{"temp":298.48,"feels_like":298.74,"temp_min":297.56,"temp_max":300.05,"pressure":1015,"humidity":64,"sea_level":1015,"grnd_level":933},"visibility":10000,"wind":{"speed":0.62,"deg":349,"gust":1.18},"rain":{"1h":3.16},"clouds":{"all":100},"dt":1661870592,"sys":{"type":2,"id":2075663,"country":"IT","sunrise":1661834187,"sunset":1661882248},"timezone":7200,"id":3163858,"name":"Zocca","cod":200}'          
-      onSearch(JSON.parse(jsonFile));  
-    }
+    })
                      
     return;
     
@@ -79,9 +69,15 @@ function SearchBar({apiKey, onSearch}){
 
 function Day({data}){
 
+  
   console.log(data);
   const weather = data.weather[0].main;
   const degrees = data.main.temp;
+  const minDegrees = data.main.temp_min;
+  const maxDegrees = data.main.temp_max;
+  const humidity = data.main.humidity;
+  const windSpeed = data.wind.speed;
+
   let imgName = "/WheatherImages.jpg";
 
   console.log(weather);
@@ -92,13 +88,13 @@ function Day({data}){
       imgName = "/WheatherImages.jpg"
       break;
     case 'Clear':
-      imgName = ""
+      imgName = "/WheatherImages.jpg"
       break;
     case 'Clouds':
-      imgName = ""
+      imgName = "/WheatherImages.jpg"
       break;
     case 'Snow':
-      imgName = ""
+      imgName = "/WheatherImages.jpg"
       break;
   }
   
@@ -106,19 +102,49 @@ function Day({data}){
     return <img id="weatherImg" src={imgName} alt={imgName} />
   }
 
+  function DateComponent(){
+    const [date, setDate] = useState(new Date());
+
+    const options = {month: 'short' };
+    const formattedDate = date.toLocaleString('en-US', options);
+
+    return <p> {date.getDay()} {formattedDate}, {date.getHours()} : {date.getMinutes()} </p>
+    
+  }
+
 
   return(
     <div id="dayDiv">
+      <div id='currentWeatherDiv'>
+        <DateComponent />
+        <p id='degreesP'>{degrees}º</p>
+        <div id='minMaxDiv'>
+          <p id='minDegreesP'>Min: {minDegrees}º</p>
+          <p id='minDegreesP'>Max: {maxDegrees}º</p>
+        </div>
+        <div id='othersInfDiv'>
+          <p id='windSpeedP'>Wind Speed: {windSpeed} m/s</p>
+          <p id='humidityP'>Humidity: {humidity}</p>          
+        </div>
+      </div>
       <Image />
-      <p>{degrees}</p>
     </div>
   )
 }
 
-function Week(){
+function Week({apiKey ,data}){
+  
+  const lat = data.coord.lat;
+  const lon = data.coord.lon;
+  fetch('https://api.openweathermap.org/data/2.5/weather?lat=' + {lat} + '&lon=' + {lon} + '&appid=' + apiKey)
+    .then(response => {
+      response.json();
+      console.log(response);
+    })
+  
   return(
     <div id="weekDiv">
-    
+      
     </div>
   )
 }

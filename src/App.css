@@ -13,16 +13,43 @@ html, body, #root{
 
 #dayDiv{
   width: 40%;
-  height: 30%;
   background-color: aqua;
   display: flex;
-  flex-direction: column;
   align-items: center;
+  justify-content: space-between;
 }
+
+#currentWeatherDiv{
+  width: 50%;
+}
+
+#minMaxDiv{
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+
+#degreesP{
+  font-size: x-large;
+  text-align: center;
+}
+
+#othersInfDiv{
+  margin-left: 20px;
+  padding-left: 10px;
+  border-left: 1px solid yellow;
+}
+
+
 
 #weatherImg{
   width: 50%;
 }
+
+
+
+
+
 #weekDiv{
   width: 40%;
   height: 30%;
