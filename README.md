@@ -51,4 +51,4 @@ Follow the instructions below to set up and run the project locally.
  ```
 ### Images
 
-![Screenshot](Print.png)
+![Screenshot](/public/Print.png)
