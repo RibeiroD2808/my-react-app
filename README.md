@@ -9,6 +9,7 @@ A simple weather application built using React and data fetched from OpenWeather
 - [Getting Started](#getting-started)
   - [Prerequisites](#prerequisites)
   - [Installation](#installation)
+- [Images](#images)
 
 ## Introduction
 
@@ -43,7 +44,9 @@ Follow the instructions below to set up and run the project locally.
  ```bash
   npm install
  ```
+
 4. Start
  ```bash
   npm start
  ```
+### Images
