@@ -15,10 +15,30 @@ html, body, #root{
 
 #searchDiv{
   display: flex;
+  justify-content: center;
+  gap: 10px;
   padding-top: 80px;
   padding-bottom: 20px;
 }
 
+
+#searchDiv > input{
+  background-color: tan;
+  height: 30px;
+  width: 250px;
+  border-radius: 40px;
+  padding-left: 10px;
+  border: 2px solid #09141F;
+}
+
+
+#searchDiv > button{
+  border-radius: 20px;
+  padding: 0px 15px ;
+  border: 2px solid #09141F;
+  background-color: tan;
+  color: #102840;
+}
 
 #infoDiv{
   
@@ -46,15 +66,20 @@ html, body, #root{
   font-size: small;
 }
 
+#nameP{
+  text-align: center;
+}
+
+#degreesP{
+  font-size: xx-large;
+  text-align: center;
+}
+
+
 #minMaxDiv{
   display: flex;
   gap: 10px;
   justify-content: center;
-}
-
-#degreesP{
-  font-size: x-large;
-  text-align: center;
 }
 
 #othersInfDiv{
@@ -68,7 +93,7 @@ html, body, #root{
 #weatherImg{
   width: 20%;
   padding: 10%;
-  margin: 5%;
+  margin: 4%;
   border: solid #09141f 2px;
   border-radius: 10px;
 }
@@ -93,6 +118,38 @@ html, body, #root{
 }
 
 
-#mapsDiv{
+.text-center{
+  text-align: center;
+}
+
+@media only screen and (max-width: 600px) {
   
+  #infoDiv{
+  
+    border: solid 2px #09141f;
+    padding-bottom:10px;
+  }
+
+  #gridDiv{
+   
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+
+  #dayDiv > * {
+    width: 100%;
+  }
+
+  #weekDiv > ul{
+    flex-direction: column;
+  }
+
+  li{
+    border-top: solid #09141f 2px;
+  }
+
+  li > img{
+    margin-left: 35%;
+    width: 30%;
+  }
 }
