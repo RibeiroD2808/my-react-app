@@ -50,3 +50,5 @@ Follow the instructions below to set up and run the project locally.
   npm start
  ```
 ### Images
+
+![Screenshot](Print.png)
